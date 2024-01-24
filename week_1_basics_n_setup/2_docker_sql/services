@@ -50,8 +50,6 @@ docker run -it \
   --network=pg-network \
   --name pgadmin \
   dpage/pgadmin4
-
-docker network create pg-network 
 ```
 
 
@@ -71,11 +69,11 @@ python ingest_data.py \
 ```
 
 ```bash
-docker build -t taxi_ingest:v011 .
+docker build -t taxi_ingest:v001 .
 
 docker run -it \
   --network=pg-network \
-  taxi_ingest:v011 \
+  taxi_ingest:v001 \
     --user=root \
     --password=root \
     --host=pg-database \
@@ -98,7 +96,7 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=ny_taxi
     volumes:
-      - "./ny_taxi_postgres_data:/opt/homebrew/var/postgresql@14/data:rw"
+      - "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
     ports:
       - "5432:5432"
   pgadmin:
@@ -107,9 +105,11 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
-      - "8080:80"ata_pgadmin:/var/lib/pgadmin
+      - "8080:80"
 ```
 
+```bash
 docker-compose down --volumes
 
 docker-compose up
+```

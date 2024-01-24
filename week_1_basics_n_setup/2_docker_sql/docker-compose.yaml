@@ -1,12 +1,12 @@
 services:
   pgdatabase:
-    image: postgres:14
+    image: postgres:13
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=ny_taxi
     volumes:
-      - "/Users/bosstation/Stage/data-engineering-zoomcamp/week_1_basics_n_setup/2_docker_sql/ny_taxi_postgres_data:/opt/homebrew/var/postgresql@14"
+      - "/Users/bosstation/Stage/data-engineering-zoomcamp/week_1_basics_n_setup/2_docker_sql/ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
     ports:
       - "5432:5432"
   pgadmin:
