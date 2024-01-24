@@ -1,23 +1,8 @@
-services:
-  pgdatabase:
-    image: postgres:13
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=ny_taxi
-    volumes:
-      - "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
-    ports:
-      - "5432:5432"
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=root
-    ports:
-      - "8080:80"
+### Running Postgres with Docker
 
- 
+```bash
+docker network create pg-network
+
 docker run -it \
   -e POSTGRES_USER="root" \
   -e POSTGRES_PASSWORD="root" \
@@ -27,22 +12,35 @@ docker run -it \
   --network=pg-network \
   --name pg-database \
   postgres:13
+```
 
+### CLI for Postgres
+
+```bash
 pip install pgcli
+```
 
+```bash
 pgcli -h localhost -p 5432 -u root -d ny_taxi
+```
 
+```
+brew install libpq --build-from-source
+```
 
-brew install libpq --build-from-source 
+# Create a network
 
-
-
-docker network create pg-network
+```bash
 export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/libpq/lib" 
 export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/libpq/include"
 pip install psycopg2
+```
 
 
+
+# Run pgAdmin
+
+```bash
 docker pull dpage/pgadmin4  
 
 docker run -it \
@@ -54,8 +52,14 @@ docker run -it \
   dpage/pgadmin4
 
 docker network create pg-network 
+```
 
+
+
+### dockerizing the ingestion script
+```bash
 URL='https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz'
+
 python ingest_data.py \
   --user=root \
   --password=root \
@@ -64,9 +68,11 @@ python ingest_data.py \
   --db=ny_taxi \
   --table_name=yellow_taxi_trips \
   --url=${URL}  
+```
 
-
+```bash
 docker build -t taxi_ingest:v011 .
+
 docker run -it \
   --network=pg-network \
   taxi_ingest:v011 \
@@ -76,4 +82,34 @@ docker run -it \
     --port=5432 \
     --db=ny_taxi \
     --table_name=yellow_taxi_trips \
-    --url=${URL}  
+    --url=${URL}
+```
+
+
+### Docker-Compose 
+
+
+```yaml
+services:
+  pgdatabase:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - "./ny_taxi_postgres_data:/opt/homebrew/var/postgresql@14/data:rw"
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"ata_pgadmin:/var/lib/pgadmin
+```
+
+docker-compose down --volumes
+
+docker-compose up
