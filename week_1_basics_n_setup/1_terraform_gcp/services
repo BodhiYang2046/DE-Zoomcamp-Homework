@@ -1,0 +1,22 @@
+### install terraform
+```bash
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+```
+
+### install google cloud
+```bash
+brew install --cask google-cloud-sdk
+```
+
+terraform fmt
+
+gcloud auth application-default login
+
+terraform init
+
+terraform plan
+
+terraform apply
+
+terraform destroy
