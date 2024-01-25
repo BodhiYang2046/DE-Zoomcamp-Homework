@@ -8,14 +8,14 @@ terraform {
 }
 
 provider "google" {
-    credentials = "./keys/my-creds.json"
-  project = "crested-axe-412222"
-  region  = "us-central1"
+  credentials = "./keys/my-creds.json"
+  project     = "crested-axe-412222"
+  region      = "us-central1"
 }
 
 
-resource "google_storage_bucket" "runner-bucket" {
-  name          = "crested-axe-412222-bucket"
+resource "google_storage_bucket" "demo-bucket" {
+  name          = "crested-axe-412222-terra-bucket"
   location      = "US"
   force_destroy = true
 
@@ -36,4 +36,10 @@ resource "google_storage_bucket" "runner-bucket" {
       type = "AbortIncompleteMultipartUpload"
     }
   }
+}
+
+
+
+resource "google_bigquery_dataset" "demo-dataset" {
+  dataset_id = "demo_dataset"
 }

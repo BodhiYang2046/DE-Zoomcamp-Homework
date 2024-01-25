@@ -9,6 +9,7 @@ brew install hashicorp/tap/terraform
 brew install --cask google-cloud-sdk
 ```
 
+```bash
 terraform fmt
 
 gcloud auth application-default login
@@ -20,3 +21,4 @@ terraform plan
 terraform apply
 
 terraform destroy
+```
