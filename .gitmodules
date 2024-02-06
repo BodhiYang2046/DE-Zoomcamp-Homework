@@ -1,0 +1,3 @@
+[submodule "week_2_workflow_orchestration/mage-zoomcamp"]
+	path = week_2_workflow_orchestration/mage-zoomcamp
+	url = git@github.com:mage-ai/mage-zoomcamp.git
