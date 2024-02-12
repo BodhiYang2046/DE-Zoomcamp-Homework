@@ -1,0 +1,16 @@
+version: '3'
+services:
+  postgres:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /Users/bosstation/Stage/data-engineering-zoomcamp/week_3_data_warehouse/parquet_data:/path/to/parquet/files
+    environment:
+      POSTGRES_DB: ${POSTGRES_DBNAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: on-failure
