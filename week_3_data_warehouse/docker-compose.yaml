@@ -1,16 +1,52 @@
-version: '3'
+version: '1.0'
 services:
-  postgres:
+  db:
+    image: postgres:latest
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - /Users/bosstation/Stage/data-engineering-zoomcamp/week_3_data_warehouse/parquet_data:/path/to/parquet/files
     environment:
       POSTGRES_DB: ${POSTGRES_DBNAME}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - homework3
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:rw
     restart: on-failure
+
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: ${POSTGRES_PORT} 
+      DB_NAME: ${POSTGRES_DBNAME}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - homework3
+    volumes:
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./import.py:/app/import.py
+      - ./parquet_data:/app/parquet_data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    networks:
+      - homework3
+    ports:
+      - "8080:80"
+
+networks:
+  homework3:
+    external: true
