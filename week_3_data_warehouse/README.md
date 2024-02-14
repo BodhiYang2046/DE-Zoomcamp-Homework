@@ -13,18 +13,44 @@ docker run -d --name database homework3
 docker run --name database -d homework3
 docker exec -it database psql -U postgres
 ``` -->
+## Tutorial
 
+### Step 1: Configure Terraform for Google Cloud Platform (GCP)
+Define variables in `variables.tf` for project ID, region, service account key file path, and other necessary parameters.
+Use the google provider in `main.tf` to configure Terraform to work with GCP.
+Use Terraform resources to create GCP resources such as a BigQuery dataset, Cloud Storage bucket, and service account
 ```bash
-docker-compose build
+terraform init
+terraform apply
+```
+
+### Step 2: Set Up Docker Environment
+Create Docker Compose File: Create a `docker-compose.yaml` file in my project directory with configurations for PostgreSQL, pgAdmin, and my application container.
+
+### Step 3: Create Dockerfile for My Application
+Create a `Dockerfile` in my project directory to define the environment for my Python application.
+
+### Step 4: Write Python Script for My Application
+Write a Python script `tools.py` that downloads data, stores it in the PostgreSQL database, uploads it to Google Cloud Storage, and executes SQL commands in BigQuery.
+
+### Step 5: Build and Run Docker Containers
+Build my Docker containers:
+```bash
+docker-compose up
+```
+Run my Docker containers:
+```bash
 docker-compose up
 ```
 
+### Step 5: Access PostgreSQL Database and pgAdmin
 ```bash
 docker-compose exec db bash 
 ```
 
-```bash(in container)
-psql -h db -U bodhi -d green_taxi -p 5432
+(in container)
+```bash
+psql -h db -U bodhi -d green_taxi -p 3212
 ```
 
 ```bash
@@ -32,11 +58,13 @@ mkdir /db
 pg_dump -U bodhi -d green_taxi -h host.docker.internal -p 3212 > /db/table.sql
 ```
 
+### Step 6: Monitor Data Upload to GCS and BigQuery and Complete homework
+Check Google Cloud Storage to verify that my data has been uploaded successfully.
+Check BigQuery to ensure that my SQL commands have been executed correctly.
+Execute sql in BigQuery.
 
-```bash
-terraform init
-terraform apply
-```
+
+## Homework3
 
 ```sql
 -- Creating external table referring to gcs path
@@ -75,11 +103,10 @@ CLUSTER BY
 SELECT * FROM `crested-axe-412222.green_taxi.green_taxi_2022`;
 
 select PUlocationID
-from  `crested-axe-412222.green_taxi.green_taxi_2022_new`
+from  `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`
 where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30'
 order by PUlocationID;
 
--- question4
 select PUlocationID
 from  `crested-axe-412222.green_taxi.green_taxi_2022_new`
 where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30'
@@ -96,6 +123,6 @@ where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
 
 -- question8
 SELECT count(*)
-from  `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`
+from  `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`;
 
 ```
