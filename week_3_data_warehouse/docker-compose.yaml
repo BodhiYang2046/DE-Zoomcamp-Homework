@@ -25,27 +25,28 @@ services:
     env_file:
       - .env
     environment:
-      DB_HOST: db
-      DB_PORT: ${POSTGRES_PORT} 
-      DB_NAME: ${POSTGRES_DBNAME}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_URL: ${POSTGRES_URL}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS}
+      GCP_BQ_ID: ${GCP_BQ_ID}
+      GCP_BQ_DATASET_ID: ${GCP_BQ_DATASET_ID}
+      GCP_BQ_TABLE_ID: ${GCP_BQ_TABLE_ID}
+      GCP_GCS_BUCKET_NAME: ${GCP_GCS_BUCKET_NAME}
     networks:
       - homework3
-    volumes:
+    # volumes:
       # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      # - ./import.py:/app/import.py
-      - ./parquet_data:/app/parquet_data
+      # - ./tools.py:/app/tools.py
+      # - ./parquet_data:/app/parquet_data
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    networks:
-      - homework3
-    ports:
-      - "8080:80"
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #   networks:
+  #     - homework3
+  #   ports:
+  #     - "8080:80"
 
 networks:
   homework3:

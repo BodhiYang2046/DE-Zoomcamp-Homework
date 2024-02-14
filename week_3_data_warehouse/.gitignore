@@ -17,3 +17,4 @@ a.out
 *.json
 .env
 postgres_data/
+*.terraform
