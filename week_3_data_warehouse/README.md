@@ -40,20 +40,62 @@ terraform apply
 
 ```sql
 -- Creating external table referring to gcs path
-CREATE OR REPLACE EXTERNAL TABLE `crested-axe-412222.homework3.green_taxi`
+CREATE OR REPLACE EXTERNAL TABLE `crested-axe-412222.green_taxi.green_taxi_2022`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://homework3_bodhi_yang/green_tripdata_2022-*.parquet']
+  uris = ['gs://de-zoomcamp-homework3-bodhi-yang/green_tripdata_2022-*.parquet']
 );
 
 -- Create a non partitioned table from external table
-CREATE OR REPLACE TABLE crested-axe-412222.homework3.green_taxi_non_partitoned AS
-SELECT * FROM crested-axe-412222.homework3.green_taxi;
+CREATE OR REPLACE TABLE `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned` AS
+SELECT * FROM `crested-axe-412222.green_taxi.green_taxi_2022`;
 
+-- question1
+select count(1)
+from `crested-axe-412222.green_taxi.green_taxi_2022`;
 
-CREATE OR REPLACE TABLE `crested-axe-412222.homework3.green_taxi_partitoned`
+-- question2
+SELECT count(DISTINCT PULocationID)
+FROM `crested-axe-412222.green_taxi.green_taxi_2022`;
+
+SELECT count(DISTINCT PULocationID)
+FROM `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`;
+
+-- question3
+SELECT count(1)
+FROM `crested-axe-412222.green_taxi.green_taxi_2022`
+where fare_amount=0;
+
+-- question4
+CREATE OR REPLACE TABLE `crested-axe-412222.green_taxi.green_taxi_2022_new`
 PARTITION BY
-  DATE(lpep_pickup_datetime) AS
-SELECT * FROM `crested-axe-412222.homework3.green_taxi`;
+  DATE(lpep_pickup_datetime) 
+CLUSTER BY
+  PUlocationID AS
+SELECT * FROM `crested-axe-412222.green_taxi.green_taxi_2022`;
+
+select PUlocationID
+from  `crested-axe-412222.green_taxi.green_taxi_2022_new`
+where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30'
+order by PUlocationID;
+
+-- question4
+select PUlocationID
+from  `crested-axe-412222.green_taxi.green_taxi_2022_new`
+where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30'
+order by PUlocationID;
+
+-- question5
+select distinct PULocationID
+from  `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`
+where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
+
+select distinct PULocationID
+from  `crested-axe-412222.green_taxi.green_taxi_2022_new`
+where DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
+
+-- question8
+SELECT count(*)
+from  `crested-axe-412222.green_taxi.green_taxi_2022_non_partitoned`
 
 ```
