@@ -1,4 +1,4 @@
-version: '1.0'
+version: '3.0'
 services:
   db:
     image: postgres:latest
@@ -35,7 +35,7 @@ services:
       - homework3
     # volumes:
       # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      # - ./tools.py:/app/tools.py
+      # - ./main.py:/app/main.py
       # - ./parquet_data:/app/parquet_data
 
   # pgadmin:
@@ -47,6 +47,15 @@ services:
   #     - homework3
   #   ports:
   #     - "8080:80"
+
+  tf_serving:
+    image: bitnami/tensorflow-serving:2
+    volumes:
+      - /tmp/model/serving_dir/tip_model/1:/bitnami/model-data/1
+    ports:
+      - 8501:8501
+    environment:
+      - TENSORFLOW_SERVING_MODEL_NAME=tip_model
 
 networks:
   homework3:

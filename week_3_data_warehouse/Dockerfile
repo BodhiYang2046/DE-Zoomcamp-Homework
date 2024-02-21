@@ -6,8 +6,8 @@ RUN pip install --no-cache-dir pandas psycopg2 sqlalchemy requests pyarrow googl
 
 # Copy the Python script into the image
 WORKDIR /app
-COPY tools.py tools.py
+COPY main.py main.py
 COPY keys/my-creds.json keys/my-creds.json
 
 # Run the Python script when the container starts
-ENTRYPOINT ["python", "tools.py"]
+ENTRYPOINT ["python", "main.py"]

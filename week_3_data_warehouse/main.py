@@ -6,7 +6,7 @@ from google.cloud import bigquery, storage
 
 # Get PostgreSQL connection parameters from environment variables
 CONN_STR = os.environ.get('DB_URL')
-print("Connection string:", CONN_STR)
+print("Trying to connect the PostgreSQL: ", CONN_STR)
 PARQUET_DIR = 'parquet_data/'
 
 # Google Cloud Platform parameters
@@ -74,7 +74,7 @@ def gcs_to_bigquery(sql_query):
     for sql in sql_query:    
         query_job = client.query(sql)
 
-def execute_task(Engine=None, GCS=None, BQ=None, query=None):
+def execute_task(Engine=None, GCS=None, BQ=None):
     try:
         # Get the engine of database
         if Engine:
@@ -117,24 +117,24 @@ def execute_task(Engine=None, GCS=None, BQ=None, query=None):
 
 if __name__ == '__main__':
     download_parquet()
-    execute_task(Engine=True, GCS=True)
-    sql_query = [
-    f"""
-    CREATE OR REPLACE EXTERNAL TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`
-    OPTIONS (
-    format = 'parquet',
-    uris = ['gs://{GCP_GCS_BUCKET_NAME}/*.parquet']
-    );
-    """, 
-    f"""
-    CREATE OR REPLACE TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}_non_partitoned` AS
-    SELECT * FROM `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`;
-    """, 
-    f"""
-    CREATE OR REPLACE TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}_partitoned`
-    PARTITION BY
-      DATE(lpep_pickup_datetime) AS
-    SELECT * FROM `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`;
-    """
-    ]
-    gcs_to_bigquery(sql_query)
+    execute_task(Engine=True)
+    # sql_query = [
+    # f"""
+    # CREATE OR REPLACE EXTERNAL TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`
+    # OPTIONS (
+    # format = 'parquet',
+    # uris = ['gs://{GCP_GCS_BUCKET_NAME}/*.parquet']
+    # );
+    # """, 
+    # f"""
+    # CREATE OR REPLACE TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}_non_partitoned` AS
+    # SELECT * FROM `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`;
+    # """, 
+    # f"""
+    # CREATE OR REPLACE TABLE `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}_partitoned`
+    # PARTITION BY
+    #   DATE(lpep_pickup_datetime) AS
+    # SELECT * FROM `{GCP_BQ_ID}.{GCP_BQ_DATASET_ID}.{GCP_BQ_TABLE_ID}`;
+    # """
+    # ]
+    # gcs_to_bigquery(sql_query)

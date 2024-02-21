@@ -63,6 +63,64 @@ Check Google Cloud Storage to verify that my data has been uploaded successfully
 Check BigQuery to ensure that my SQL commands have been executed correctly.
 Execute sql in BigQuery.
 
+### BigQuery ML
+
+
+### BigQuery Deployment
+
+#### 1.This command prompts you to authenticate to Google Cloud Platform (GCP) using your Google account. It sets up authentication credentials that allow you to interact with GCP services using the Google Cloud SDK.
+
+```bash
+gcloud auth login
+```
+
+#### 2.This command uses the BigQuery CLI (bq) to extract a model named green_taxi.tip_model from a BigQuery project with the ID crested-axe-412222 and saves it to Google Cloud Storage (GCS) bucket gs://de-zoomcamp-homework3-bodhi-yang/tip_model.
+
+```bash
+bq --project_id crested-axe-412222 extract -m green_taxi.tip_hyperparam_model gs://de-zoomcamp-homework3-bodhi-yang/tip_model
+```
+
+#### 3
+```bash
+mkdir /tmp/model
+```
+
+#### 4.This command copies the contents of the tip_model directory from the specified GCS bucket (gs://de-zoomcamp-homework3-bodhi-yang/tip_model) to the local /tmp/model directory.
+
+```bash
+gsutil cp -r gs://de-zoomcamp-homework3-bodhi-yang/tip_model /tmp/model
+```
+
+#### 5.This command creates a directory structure for serving the model. It creates a directory tip_model within the serving_dir directory, and within that, it creates a subdirectory 1.
+
+```bash
+mkdir -p serving_dir/tip_model/1
+```
+
+#### 6.This command copies all the contents of the /tmp/model/tip_model directory to the serving_dir/tip_model/1 directory, which was created in the previous step. It's essentially moving the model files into a directory structure expected by TensorFlow Serving.
+
+```bash
+cp -r /tmp/model/tip_model/* serving_dir/tip_model/1
+```
+
+#### 7.This command pulls the Docker image for TensorFlow Serving from the Docker Hub repository. Docker images are pre-packaged software bundles that contain everything needed to run a piece of software, including the code, runtime, libraries, and dependencies.
+
+```bash
+docker pull bitnami/tensorflow-serving:2
+```
+
+#### 8.This command runs a Docker container based on the TensorFlow Serving image previously pulled. It exposes port 8501 on the host system (your computer) and mounts the serving_dir/tip_model directory to /models/tip_model inside the container. It also sets the environment variable MODEL_NAME to tip_model.
+
+```bash
+docker run -d -p 8501:8501 -v $(pwd)/serving_dir/tip_model/1:/bitnami/model-data/1 -e MODEL_NAME=tip_model -t bitnami/tensorflow-serving:2 
+```
+
+#### 9.This command sends a POST request to the TensorFlow Serving server running locally (http://localhost:8501) with data for prediction. It sends a JSON payload containing input features for prediction.
+
+```bash
+curl -d '{"instances": [{"passenger_count":1, "trip_distance":12.2, "PULocationID":"193", "DOLocationID":"264", "payment_type":"2","fare_amount":20.4,"tolls_amount":0.0}]}' -X POST http://localhost:8501/v1//model-data/tip_model:predict
+```
+
 
 ## Homework3
 
