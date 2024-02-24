@@ -1,0 +1,22 @@
+# Docker project generated files to ignore
+#  if you want to ignore files created by your editor/tools,
+#  please consider a global .gitignore https://help.github.com/articles/ignoring-files
+.vagrant*
+bin
+docker/docker
+.*.swp
+a.out
+*.orig
+.flymake*
+.idea
+.DS_Store
+*.test
+.hg/
+.git/
+
+*.json
+.env
+postgres_data/
+*.terraform
+
+Docker_setup/raw_data/

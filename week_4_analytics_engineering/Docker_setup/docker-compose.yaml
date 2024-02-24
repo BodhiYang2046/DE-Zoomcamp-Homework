@@ -1,0 +1,42 @@
+version: '3.0'
+services:
+  db:
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DBNAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:rw
+    restart: on-failure
+
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      DB_URL: ${POSTGRES_URL}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS}
+      GCP_BQ_ID: ${GCP_BQ_ID}
+      GCP_BQ_DATASET_ID: ${GCP_BQ_DATASET_ID}
+      GCP_BQ_TABLE_ID: ${GCP_BQ_TABLE_ID}
+      GCP_GCS_BUCKET_NAME: ${GCP_GCS_BUCKET_NAME}
+    volumes:
+      - ./main.py:/app/main.py
+      - ./raw_data:/app/raw_data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "8080:80"
