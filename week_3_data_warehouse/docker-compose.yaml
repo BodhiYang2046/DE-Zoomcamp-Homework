@@ -33,20 +33,20 @@ services:
       GCP_GCS_BUCKET_NAME: ${GCP_GCS_BUCKET_NAME}
     networks:
       - homework3
-    # volumes:
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      # - ./main.py:/app/main.py
-      # - ./parquet_data:/app/parquet_data
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./main.py:/app/main.py
+      - ./parquet_data:/app/parquet_data
 
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-  #     - PGADMIN_DEFAULT_PASSWORD=admin
-  #   networks:
-  #     - homework3
-  #   ports:
-  #     - "8080:80"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    networks:
+      - homework3
+    ports:
+      - "8080:80"
 
   tf_serving:
     image: bitnami/tensorflow-serving:2
